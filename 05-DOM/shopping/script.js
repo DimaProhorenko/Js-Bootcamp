@@ -29,11 +29,15 @@ let output;
 // title.style.borderRadius = '20px';
 
 // document.querySelector();
-const title = document.querySelector('h1');
-output = title;
-output = document.querySelector('#app-title');
-output = document.querySelector('input[type="text"]');
+// const title = document.querySelector('h1');
+// output = title;
+// output = document.querySelector('#app-title');
+// output = document.querySelector('input[type="text"]');
 
-document.querySelector('li:nth-child(2)').style.color = 'orange';
+// document.querySelector('li:nth-child(2)').style.color = 'orange';
+
+const listItems = document.querySelectorAll('.items li');
+listItems.forEach((item) => (item.style.color = 'red'));
+console.log(listItems);
 
 console.log(output);
