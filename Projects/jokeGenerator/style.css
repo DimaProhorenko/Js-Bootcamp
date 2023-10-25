@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+:root {
+    font-size: 10px;
+}
+
+body {
+    font-size: 1.6rem;
+    line-height: 1.5;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: blueviolet;
+
+}
+
+.container {
+    max-width: 600px;
+    min-height: 100vh;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    text-align: center;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 2rem;
+}
+
+.card > * + * {
+    margin-block-start: 1rem;
+}
+
+.card__title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    line-height: 1;
+}
+
+.btn {
+    display: inline-block;
+    outline: none;
+    border: none;
+    background-color: blueviolet;
+    color: #fff;
+    padding: .75rem 1.25rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 1.8rem;
+}
