@@ -1,0 +1,73 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    font-size: 10px;
+}
+
+
+body {
+    background-color: blueviolet;
+    color: #fff;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1.6rem;
+}
+
+
+.btn {
+    display: block;
+    width: 100%;
+    padding-block: 1rem;
+    border-radius: .5rem;
+    outline: none;
+    border: none;
+    background-color: darkslateblue;
+    color: #fff;
+    cursor: pointer;
+}
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    max-width: 38rem;
+    padding: 2rem;
+    background-color: #fff;
+    color: #333;
+    border-radius: 1rem;
+}
+
+.card > * + * {
+    margin-block-start: 1.5rem;
+}
+
+.card__title {
+    font-size: 2.4rem;
+    text-align: center;
+}
+
+.card__body {
+    display: flex;
+}
+
+.card__img {
+    margin-inline-end: 2rem;
+}
+
+.card__img img {
+    display: block;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+}
+
+.card p {
+    word-wrap:break-word;
+}
