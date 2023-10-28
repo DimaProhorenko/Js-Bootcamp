@@ -5,6 +5,24 @@ const router = {
 	},
 };
 
+const createItemFromMovie = (movie) => {
+	return {
+		title: movie.title,
+		release_date: movie.release_date,
+		poster_path: movie.poster_path,
+		id: movie.id,
+	};
+};
+
+const createItemFromShow = (show) => {
+	return {
+		title: show.original_name,
+		release_date: show.first_air_date,
+		poster_path: show.poster_path,
+		id: show.id,
+	};
+};
+
 const highlightActiveLink = () => {
 	const links = document.querySelectorAll('.nav-link');
 	console.log(router.getCurrentPage());
@@ -14,6 +32,18 @@ const highlightActiveLink = () => {
 		}
 	});
 };
+
+const showSpinner = () => {
+	const spinner = document.querySelector('.spinner');
+	spinner.style.display = 'block';
+};
+
+const hideSpinner = () => {
+	const spinner = document.querySelector('.spinner');
+	spinner.style.display = 'none';
+};
+
+// Movies
 
 const createMovieCard = (movie) => {
 	const cardDiv = document.createElement('div');
@@ -55,23 +85,35 @@ const createMovieCard = (movie) => {
 };
 
 const displayPopularMovies = async () => {
-	const result = await fetchAPIData('movie/popular');
-	const movies = result.results;
+	const { results: movies } = await fetchAPIData('movie/popular');
 	console.log(movies);
 	const popularMovies = document.getElementById('popular-movies');
 	movies.forEach((movie) => {
-		const movieCard = createMovieCard(movie);
+		const movieCard = createMovieCard(createItemFromMovie(movie));
 		popularMovies.appendChild(movieCard);
+	});
+};
+
+// TV Series
+const displayPopularTvSeries = async () => {
+	const { results: tv } = await fetchAPIData('tv/popular');
+	console.log(tv);
+	const popularSeries = document.getElementById('popular-shows');
+	tv.forEach((series) => {
+		const seriesCard = createMovieCard(createItemFromShow(series));
+		popularSeries.appendChild(seriesCard);
 	});
 };
 
 const fetchAPIData = async (endpoint) => {
 	const API_KEY = 'a2cb3b0b44c96a3a6377f4075e0d9718';
 	const API_URL = 'https://api.themoviedb.org/3/';
+	showSpinner();
 
 	const url = `${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`;
 	const repsonse = await fetch(url);
 	const data = await repsonse.json();
+	hideSpinner();
 	return data;
 };
 
@@ -80,7 +122,9 @@ function init() {
 	switch (router.getCurrentPage()) {
 		case '/':
 			console.log('Home');
+			showSpinner();
 			displayPopularMovies();
+			hideSpinner();
 			break;
 		case 'index.html':
 			console.log('Home');
@@ -88,6 +132,7 @@ function init() {
 			break;
 		case 'shows.html':
 			console.log('Shows');
+			displayPopularTvSeries();
 			break;
 		case 'movie-details.html':
 			console.log('Details');
