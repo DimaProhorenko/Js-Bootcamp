@@ -46,16 +46,19 @@
 							src="images/no-image.jpg"
 							class="card-img-top"
 							alt="Movie Title"
+							id="img"
 						/>
 					</div>
 					<div>
 						<h2>Movie Title</h2>
 						<p>
 							<i class="fas fa-star text-primary"></i>
-							8 / 10
+							<span id="star">8</span> / 10
 						</p>
-						<p class="text-muted">Release Date: XX/XX/XXXX</p>
-						<p>
+						<p class="text-muted" id="release-date">
+							Release Date: XX/XX/XXXX
+						</p>
+						<p id="description">
 							Lorem ipsum dolor sit amet consectetur adipisicing
 							elit. Maiores atque molestiae error debitis
 							provident dolore hic odit, impedit sint, voluptatum
@@ -81,19 +84,25 @@
 					<h2>Movie Info</h2>
 					<ul>
 						<li>
-							<span class="text-secondary">Budget:</span>
-							$1,000,000
+							<span class="text-secondary">Budget: </span>$<span
+								id="budget"
+								>1,000,000</span
+							>
 						</li>
 						<li>
-							<span class="text-secondary">Revenue:</span>
-							$2,000,000
+							<span class="text-secondary">Revenue: </span>$<span
+								id="revenue"
+								>2,000,000</span
+							>
 						</li>
 						<li>
-							<span class="text-secondary">Runtime:</span> 90
+							<span class="text-secondary">Runtime:</span>
+							<span id="runtime">90</span>
 							minutes
 						</li>
 						<li>
-							<span class="text-secondary">Status:</span> Released
+							<span class="text-secondary">Status:</span>
+							<span id="status">Released</span>
 						</li>
 					</ul>
 					<h4>Production Companies</h4>
