@@ -215,7 +215,10 @@ section h2 {
   padding: 10px;
 }
 
-/* Movie Details */
+/*   Details */
+.details-container {
+  /* position: relative; */
+}
 .details-top {
   display: flex;
   justify-content: space-between;
@@ -241,11 +244,26 @@ section h2 {
 .details-bottom {
 }
 
+
 .details-bottom li {
   margin: 15px 0;
   padding-bottom: 8px;
   border-bottom: 1px solid #fff;
   border-color: rgba(255, 255, 255, 0.1);
+}
+
+.details-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.1;
 }
 
 /* Search */
@@ -340,4 +358,15 @@ section h2 {
 
 .alert-error {
   background: red;
+}
+
+
+.companies {
+  display: flex;
+}
+
+.companies img {
+  display: block;
+  width: 100px;
+  height:80px;
 }

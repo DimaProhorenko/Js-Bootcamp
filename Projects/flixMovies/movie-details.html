@@ -39,7 +39,7 @@
 				<a class="btn" href="index.html">Back To Movies</a>
 			</div>
 			<!-- Movie Details Output -->
-			<div id="movie-details">
+			<div class="details-container" id="movie-details">
 				<div class="details-top">
 					<div>
 						<img
@@ -70,12 +70,12 @@
 							Cumque omnis ad recusandae.
 						</p>
 						<h5>Genres</h5>
-						<ul class="list-group">
-							<li>Genre 1</li>
-							<li>Genre 2</li>
-							<li>Genre 3</li>
-						</ul>
-						<a href="#" target="_blank" class="btn"
+						<ul class="list-group" id="genres"></ul>
+						<a
+							href="#"
+							id="homepage-link"
+							target="_blank"
+							class="btn"
 							>Visit Movie Homepage</a
 						>
 					</div>
@@ -106,9 +106,7 @@
 						</li>
 					</ul>
 					<h4>Production Companies</h4>
-					<div class="list-group">
-						Company 1, Company 2, Company 3
-					</div>
+					<div class="list-group companies" id="companies"></div>
 				</div>
 			</div>
 		</section>

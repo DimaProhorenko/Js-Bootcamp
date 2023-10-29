@@ -49,6 +49,22 @@ const setImageSrc = (img, path) => {
 	img.setAttribute('src', fullUrl);
 };
 
+const createCompanyLogo = (logoPath) => {
+	const img = document.createElement('img');
+	img.setAttribute('src', logoPath);
+	return img;
+};
+
+const displayBackDrop = (type, imgPath) => {
+	const backdrop = document.createElement('div');
+	backdrop.className = 'details-backdrop';
+	backdrop.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${imgPath}')`;
+
+	if (type === 'movie') {
+		document.querySelector('.details-top').appendChild(backdrop);
+	}
+};
+
 // Movies
 
 const createMovieCard = (movie) => {
@@ -120,8 +136,11 @@ const getMovieDetails = async () => {
 
 const displayMovieDetails = async () => {
 	const movie = await getMovieDetails();
+	const genres = movie.genres.map((el) => el.name);
 
 	console.log(movie);
+
+	displayBackDrop('movie', movie.backdrop_path);
 
 	const title = document.querySelector('.details-top h2');
 	title.textContent = movie.title;
@@ -150,7 +169,38 @@ const displayMovieDetails = async () => {
 
 	const statusEl = document.querySelector('#status');
 	statusEl.textContent = movie.status;
+
+	genres.forEach((item) => {
+		const li = document.createElement('li');
+		li.textContent = item;
+		document.querySelector('#genres').appendChild(li);
+	});
+
+	if (movie.homepage) {
+		document
+			.querySelector('#homepage-link')
+			.setAttribute('href', movie.homepage);
+	}
+
+	movie.production_companies.forEach((company) => {
+		const text = document.createTextNode(company.name + ', ');
+		document.querySelector('#companies').appendChild(text);
+	});
 };
+
+const getMovieGenre = async (movieGenres) => {
+	const { genres } = await fetchMovieGenres();
+	return genres.filter((genre) => {
+		return movieGenres.includes(genre.id);
+	});
+};
+
+const fetchProductionCompany = async (id) => {
+	const result = await fetchAPIData(`company/${id}/images`);
+	console.log(result);
+};
+
+const fetchMovieGenres = async () => await fetchAPIData('genre/movie/list');
 
 const fetchAPIData = async (endpoint, customURL = false) => {
 	const API_KEY = 'a2cb3b0b44c96a3a6377f4075e0d9718';
