@@ -67,12 +67,12 @@ const displayBackDrop = (type, imgPath) => {
 
 // Movies
 
-const createMovieCard = (movie) => {
+const createMovieCard = (movie, type = 'movie') => {
 	const cardDiv = document.createElement('div');
 	cardDiv.className = 'card';
 
 	const cardLink = document.createElement('a');
-	cardLink.setAttribute('href', `./movie-details.html?id=${movie.id}`);
+	cardLink.setAttribute('href', `./${type}-details.html?id=${movie.id}`);
 
 	const cardImg = document.createElement('img');
 	cardImg.setAttribute(
@@ -122,7 +122,7 @@ const displayPopularTvSeries = async () => {
 	console.log(tv);
 	const popularSeries = document.getElementById('popular-shows');
 	tv.forEach((series) => {
-		const seriesCard = createMovieCard(createItemFromShow(series));
+		const seriesCard = createMovieCard(createItemFromShow(series), 'tv');
 		popularSeries.appendChild(seriesCard);
 	});
 };
@@ -132,6 +132,13 @@ const getMovieDetails = async () => {
 	const movieId = searchParams.get('id');
 	const movie = await fetchAPIData(`movie/${movieId}`, false);
 	return movie;
+};
+
+const getTvDetails = async () => {
+	const searchParams = new URLSearchParams(window.location.search);
+	const tvId = searchParams.get('id');
+	const tv = await fetchAPIData(`tv/${tvId}`, false);
+	return tv;
 };
 
 const displayMovieDetails = async () => {
@@ -188,6 +195,52 @@ const displayMovieDetails = async () => {
 	});
 };
 
+const displayTvDetails = async () => {
+	const tv = await getTvDetails();
+	console.log(tv);
+
+	const title = document.querySelector('#tv-title');
+	title.textContent = tv.name;
+
+	const rating = document.querySelector('#tv-rating');
+	rating.textContent = Math.floor(tv.vote_average);
+
+	const releaseDate = document.querySelector('#tv-release');
+	releaseDate.textContent = tv.first_air_date;
+
+	const overview = document.querySelector('#tv-overview');
+	overview.textContent = tv.overview;
+
+	const poster = document.querySelector('#tv-poster');
+	setImageSrc(poster, tv.poster_path);
+
+	const genreList = document.querySelector('#tv-genre');
+	tv.genres.forEach((item) => {
+		const li = document.createElement('li');
+		li.textContent = item.name;
+		genreList.appendChild(li);
+	});
+
+	const homepageLink = document.querySelector('#homepage-link');
+	if (tv.homepage) {
+		homepageLink.setAttribute('href', tv.homepage);
+	} else {
+		homepageLink.style.display = 'none';
+	}
+
+	const numOfEpisodes = document.querySelector('#num-episodes');
+	numOfEpisodes.textContent = tv.number_of_episodes;
+
+	const lastAirEpisode = document.querySelector('#last-air-episode');
+	lastAirEpisode.textContent = tv.last_episode_to_air.name;
+
+	const status = document.querySelector('#tv-status');
+	status.textContent = tv.status;
+
+	const seasons = document.querySelector('#tv-seasons');
+	seasons.textContent = tv.number_of_seasons;
+};
+
 const getMovieGenre = async (movieGenres) => {
 	const { genres } = await fetchMovieGenres();
 	return genres.filter((genre) => {
@@ -226,25 +279,21 @@ const fetchAPIData = async (endpoint, customURL = false) => {
 function init() {
 	switch (router.getCurrentPage()) {
 		case '/':
-			console.log('Home');
 			showSpinner();
 			displayPopularMovies();
 			hideSpinner();
 			break;
 		case 'index.html':
-			console.log('Home');
 			displayPopularMovies();
 			break;
 		case 'shows.html':
-			console.log('Shows');
 			displayPopularTvSeries();
 			break;
 		case 'movie-details.html':
-			console.log('Details');
 			displayMovieDetails();
 			break;
 		case 'tv-details.html':
-			console.log('TV Details');
+			displayTvDetails();
 			break;
 		case 'search.html':
 			console.log('Search');
