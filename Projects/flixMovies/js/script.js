@@ -11,6 +11,7 @@ const createItemFromMovie = (movie) => {
 		release_date: movie.release_date,
 		poster_path: movie.poster_path,
 		id: movie.id,
+		rating: movie.vote_average,
 	};
 };
 
@@ -20,12 +21,12 @@ const createItemFromShow = (show) => {
 		release_date: show.first_air_date,
 		poster_path: show.poster_path,
 		id: show.id,
+		rating: show.vote_average,
 	};
 };
 
 const highlightActiveLink = () => {
 	const links = document.querySelectorAll('.nav-link');
-	console.log(router.getCurrentPage());
 	links.forEach((link) => {
 		if (link.getAttribute('href') === './' + router.getCurrentPage()) {
 			link.classList.add('text-primary');
@@ -63,6 +64,46 @@ const displayBackDrop = (type, imgPath) => {
 	if (type === 'movie') {
 		document.querySelector('.details-top').appendChild(backdrop);
 	}
+};
+
+// Now playing slider
+const displaySlider = async () => {
+	const { results } = await fetchAPIData('movie/now_playing');
+	const slider = document.querySelector('#main-slider');
+	results.forEach((movie) => {
+		slider.appendChild(createSlide(createItemFromMovie(movie)));
+	});
+};
+
+const createSlide = (item) => {
+	const slide = document.createElement('div');
+	slide.className = 'swiper-slide';
+
+	const link = document.createElement('a');
+	link.setAttribute('href', `./movie-details.html?id=${item.id}`);
+
+	const poster = document.createElement('img');
+	setImageSrc(poster, item.poster_path);
+	poster.setAttribute('alt', item.title);
+
+	const rating = document.createElement('h4');
+	rating.className = 'swiper-rating';
+
+	const ratingStar = document.createElement('i');
+	ratingStar.className = 'fas fa-star text-secondary';
+
+	const span = document.createElement('span');
+	span.textContent = `${Math.floor(item.rating)}/10`;
+
+	rating.appendChild(ratingStar);
+	rating.appendChild(span);
+
+	link.appendChild(poster);
+
+	slide.appendChild(link);
+	slide.appendChild(rating);
+
+	return slide;
 };
 
 // Movies
@@ -108,7 +149,6 @@ const createMovieCard = (movie, type = 'movie') => {
 
 const displayPopularMovies = async () => {
 	const { results: movies } = await fetchAPIData('movie/popular');
-	console.log(movies);
 	const popularMovies = document.getElementById('popular-movies');
 	movies.forEach((movie) => {
 		const movieCard = createMovieCard(createItemFromMovie(movie));
@@ -265,7 +305,6 @@ const fetchAPIData = async (endpoint, customURL = false) => {
 	} else {
 		url = `${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`;
 	}
-	console.log(url);
 	showSpinner();
 
 	// const url = `${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`;
@@ -275,15 +314,27 @@ const fetchAPIData = async (endpoint, customURL = false) => {
 	return data;
 };
 
+const initSwiper = () => {
+	const swiper = new Swiper('.swiper', {
+		slidesPerView: 4,
+		spaceBetween: 30,
+		navigation: {
+			nextEl: '.swiper-button-next',
+			prevEl: '.swiper-button-prev',
+		},
+	});
+	displaySlider();
+};
+
 // Init App
 function init() {
 	switch (router.getCurrentPage()) {
 		case '/':
-			showSpinner();
+			initSwiper();
 			displayPopularMovies();
-			hideSpinner();
 			break;
 		case 'index.html':
+			initSwiper();
 			displayPopularMovies();
 			break;
 		case 'shows.html':
