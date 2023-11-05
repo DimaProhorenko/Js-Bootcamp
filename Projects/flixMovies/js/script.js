@@ -3,6 +3,19 @@ const router = {
 	getCurrentPage: function () {
 		return this.fullPath[this.fullPath.length - 1];
 	},
+	search: {
+		query: '',
+		type: '',
+		page: 1,
+		totalPages: 1,
+		totalResults: 0,
+	},
+};
+
+const nextSearchPageHandler = () => {
+	router.search.page++;
+	displaySearchResults();
+	updatePagination();
 };
 
 const createItemFromMovie = (movie) => {
@@ -34,6 +47,59 @@ const highlightActiveLink = () => {
 	});
 };
 
+const createPagination = () => {
+	const pagination = document.createElement('div');
+	pagination.id = 'pagination';
+	pagination.className = 'pagination';
+
+	const prevBtn = document.createElement('button');
+	prevBtn.className = 'btn btn-primary';
+	prevBtn.id = 'prev';
+	prevBtn.textContent = 'Prev';
+	prevBtn.style.marginInlineEnd = '.5rem';
+	prevBtn.disabled = router.search.page === 1;
+
+	const nextBtn = document.createElement('button');
+	nextBtn.className = 'btn btn-primary';
+	nextBtn.id = 'next';
+	nextBtn.textContent = 'Next';
+	nextBtn.disabled = router.search.page === router.search.totalPages;
+	nextBtn.addEventListener('click', nextSearchPageHandler);
+
+	const pageCounter = document.createElement('div');
+	pageCounter.className = 'page-counter';
+	pageCounter.appendChild(document.createTextNode('Page '));
+
+	const currentPage = document.createElement('span');
+	currentPage.textContent = router.search.page;
+	currentPage.id = 'current-page';
+
+	const totalPages = document.createElement('span');
+	totalPages.textContent = router.search.totalPages;
+	totalPages.id = 'total-pages';
+
+	pageCounter.appendChild(currentPage);
+	pageCounter.appendChild(document.createTextNode(' of '));
+	pageCounter.appendChild(totalPages);
+
+	pagination.appendChild(prevBtn);
+	pagination.appendChild(nextBtn);
+	pagination.appendChild(pageCounter);
+
+	return pagination;
+};
+
+const updatePagination = () => {
+	const prevBtn = document.querySelector('#prev');
+	const nextBtn = document.querySelector('#next');
+	const currentPage = document.querySelector('#current-page');
+	const totalPages = document.querySelector('#total-pages');
+
+	prevBtn.disabled = router.search.page === 1;
+	nextBtn.disabled = router.search.page === router.search.totalPages;
+	// currentPage = document
+};
+
 const showSpinner = () => {
 	const spinner = document.querySelector('.spinner');
 	spinner.style.display = 'block';
@@ -42,6 +108,17 @@ const showSpinner = () => {
 const hideSpinner = () => {
 	const spinner = document.querySelector('.spinner');
 	spinner.style.display = 'none';
+};
+
+const showAlert = (msg, classNames) => {
+	const alert = document.createElement('div');
+	alert.classList.add('alert', classNames);
+	alert.appendChild(document.createTextNode(msg));
+	document.querySelector('#alert').appendChild(alert);
+
+	setTimeout(() => {
+		document.querySelector('#alert').removeChild(alert);
+	}, 2000);
 };
 
 const setImageSrc = (img, path) => {
@@ -281,6 +358,49 @@ const displayTvDetails = async () => {
 	seasons.textContent = tv.number_of_seasons;
 };
 
+const search = async () => {
+	const searchParams = new URLSearchParams(window.location.search);
+	router.search.type = searchParams.get('type');
+	router.search.query = searchParams.get('search-term');
+
+	if (router.search.query !== '' && router.search.query !== null) {
+		displaySearchResults();
+		const pagination = createPagination();
+		document
+			.querySelector('#search-results-wrapper')
+			.appendChild(pagination);
+	} else {
+		showAlert('Please enter a search query', 'alert-error');
+	}
+};
+
+const displaySearchResults = async () => {
+	const {
+		results,
+		page,
+		total_pages,
+		total_results: totalResults,
+	} = await searchMovieShow(router.search.type, router.search.query);
+
+	router.search.totalResults = totalResults;
+	router.search.page = page;
+	router.search.totalPages = total_pages;
+
+	document.querySelector('#search-results-heading').textContent = `${
+		page * 20
+	} of ${router.search.totalResults} Results for ${router.search.query}`;
+
+	const resultsEl = document.querySelector('#search-results');
+	results.forEach((item) => {
+		const itemObj =
+			router.search.type === 'movie'
+				? createItemFromMovie(item)
+				: createItemFromShow(item);
+		const itemCard = createMovieCard(itemObj, 'tv');
+		resultsEl.appendChild(itemCard);
+	});
+};
+
 const getMovieGenre = async (movieGenres) => {
 	const { genres } = await fetchMovieGenres();
 	return genres.filter((genre) => {
@@ -290,7 +410,6 @@ const getMovieGenre = async (movieGenres) => {
 
 const fetchProductionCompany = async (id) => {
 	const result = await fetchAPIData(`company/${id}/images`);
-	console.log(result);
 };
 
 const fetchMovieGenres = async () => await fetchAPIData('genre/movie/list');
@@ -307,20 +426,40 @@ const fetchAPIData = async (endpoint, customURL = false) => {
 	}
 	showSpinner();
 
-	// const url = `${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`;
 	const repsonse = await fetch(url);
 	const data = await repsonse.json();
 	hideSpinner();
 	return data;
 };
 
+const searchMovieShow = async (type = 'movie', query) => {
+	const API_KEY = 'a2cb3b0b44c96a3a6377f4075e0d9718';
+	const API_URL = 'https://api.themoviedb.org/3/';
+	showSpinner();
+	let url = `${API_URL}/search/${router.search.type}?api_key=${API_KEY}&language=en-US&query=${router.search.query}`;
+	const response = fetch(url);
+	hideSpinner();
+	return (await response).json();
+};
+
 const initSwiper = () => {
 	const swiper = new Swiper('.swiper', {
-		slidesPerView: 4,
+		slidesPerView: 1,
 		spaceBetween: 30,
 		navigation: {
 			nextEl: '.swiper-button-next',
 			prevEl: '.swiper-button-prev',
+		},
+		breakpoints: {
+			400: {
+				slidesPerView: 2,
+			},
+			670: {
+				slidesPerView: 3,
+			},
+			980: {
+				slidesPerView: 4,
+			},
 		},
 	});
 	displaySlider();
@@ -347,7 +486,7 @@ function init() {
 			displayTvDetails();
 			break;
 		case 'search.html':
-			console.log('Search');
+			search();
 			break;
 	}
 	highlightActiveLink();
